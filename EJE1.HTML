@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tienda de Juegos - Profesional</title>
+<style>
+  :root{
+    --bg-dark:#0f141a;
+    --card:#1c232b;
+    --accent:#4ea8de;
+    --accent-light:#89c2d9;
+    --text:#e5e5e5;
+    --btn:#1e88e5;
+    --btn-hover:#1565c0;
+    --success:#22c55e;
+  }
+
+  /* Reset / base */
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    background:var(--bg-dark);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:1100px;margin:24px auto;padding:18px;}
+
+  header{
+    background:linear-gradient(90deg,#1e3a8a,#0ea5e9);
+    padding:18px;
+    border-radius:10px;
+    text-align:center;
+    box-shadow:0 6px 16px rgba(0,0,0,0.5);
+  }
+  header h1{margin:0;font-size:1.6rem;letter-spacing:1px;}
+
+  /* Grid de juegos */
+  #gameGrid{
+    margin-top:20px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:14px;
+  }
+  .game-item{
+    background:var(--card);
+    border-radius:12px;
+    padding:10px;
+    text-align:center;
+    cursor:pointer;
+    transition:transform .18s, box-shadow .18s;
+    box-shadow:0 6px 14px rgba(0,0,0,0.45);
+  }
+  .game-item:hover{transform:translateY(-6px);box-shadow:0 12px 26px rgba(0,0,0,0.6);}
+  .game-item img{width:100%;height:120px;object-fit:cover;border-radius:8px;}
+  .game-item p{margin:10px 0 0 0;font-weight:700;color:var(--accent-light);}
+
+  /* Sección precios */
+  #priceSection{
+    margin-top:18px;
+    display:none;
+  }
+  .price-panel{
+    background:rgba(255,255,255,0.03);
+    padding:12px;border-radius:10px;
+    box-shadow:0 6px 14px rgba(0,0,0,0.45);
+  }
+  .price-row{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:8px;padding:8px;border-radius:8px;margin-bottom:8px;
+    background:rgba(255,255,255,0.02);
+  }
+  .price-row .label{flex:1}
+  .price-row .price{font-weight:800;color:var(--accent-light);min-width:72px;text-align:right}
+  .btn{
+    background:var(--btn);border:none;color:#fff;padding:8px 10px;border-radius:8px;
+    cursor:pointer;font-weight:700;
+  }
+  .btn:hover{background:var(--btn-hover)}
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text)}
+
+  /* Carrito */
+  #cartToggle{position:fixed;top:18px;right:18px;z-index:1200;background:var(--success);color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:800;box-shadow:0 6px 18px rgba(0,0,0,0.4)}
+  #cart{position:fixed;right:18px;top:64px;width:320px;background:linear-gradient(180deg,rgba(16,24,32,0.98),rgba(12,18,26,0.98));padding:12px;border-radius:12px;box-shadow:0 18px 40px rgba(0,0,0,0.6);display:none;z-index:1200}
+  #cart h3{margin:0 0 8px 0;color:var(--accent-light)}
+  .cart-item{display:flex;justify-content:space-between;padding:8px;border-radius:8px;margin-bottom:8px;background:rgba(255,255,255,0.02)}
+  .cart-total{font-weight:900;text-align:right;margin-top:8px;font-size:1.05rem;color:var(--accent-light)}
+  .small{font-size:0.9rem;color:rgba(255,255,255,0.75)}
+
+  /* Responsive */
+  @media (max-width:520px){
+    .game-item img{height:100px}
+    #cart{width:92vw;right:4vw}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Tienda de Juegos — Selecciona un juego</h1>
+    </header>
+
+    <!-- GRID: 10 juegos -->
+    <div id="gameGrid" aria-label="Galería de juegos">
+      <!-- Nota: reemplaza src por tus imágenes -->
+      <div class="game-item" data-key="fortnite" onclick="openPrices('fortnite')">
+        <img src="https://cdn2.unrealengine.com/12br-delay-social-news-header-02-1920x1080-119208936.jpg" alt="Fortnite">
+        <p>Fortnite</p>
+      </div>
+
+      <div class="game-item" data-key="freefire" onclick="openPrices('freefire')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnuDq6I0RunolD7ZruyfqgTkjnh2_oAo0w1A&s" alt="Free Fire">
+        <p>Free Fire</p>
+      </div>
+
+      <div class="game-item" data-key="codm" onclick="openPrices('codm')">
+        <img src="https://i.pinimg.com/736x/62/73/86/6273861b81193778439d68dae7a26e71.jpg" alt="Call of Duty Mobile">
+        <p>Call of Duty Mobile</p>
+      </div>
+
+      <div class="game-item" data-key="pubg" onclick="openPrices('pubg')">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcDbA7_DlNjyKjw-q0Z-sXgbbMmm_kcZ_lTBfmkjUA4baKqxo8eHvDAg5OeuLXcoXCVUY&usqp=CAU" alt="PUBG Mobile">
+        <p>PUBG Mobile</p>
+      </div>
+
+      <div class="game-item" data-key="roblox" onclick="openPrices('roblox')">
+        <img src="https://images.rbxcdn.com/28ab48fcd5d5b19b03c126d2b6aef4b8.jpg" alt="Roblox">
+        <p>Roblox</p>
+      </div>
+
+      <div class="game-item" data-key="mobilelegends" onclick="openPrices('mobilelegends')">
+        <img src="https://cdn.prod.website-files.com/65956e2711516206d2d1258f/67d16acac5515372f3f3af70_MLBB%20rank%20cover.webp" alt="Mobile Legends">
+        <p>Mobile Legends</p>
+      </div>
+
+      <div class="game-item" data-key="genshin" onclick="openPrices('genshin')">
+        <img src="https://gaming-cdn.com/images/products/9471/orig/genshin-impact-pc-epic-games-cover.jpg?v=1754495553" alt="Genshin Impact">
+        <p>Genshin Impact</p>
+      </div>
+
+      <div class="game-item" data-key="brawl" onclick="openPrices('brawl')">
+        <img src="https://wallpapers.com/images/featured/brawl-stars-gkfzjpvuf1h0ypyi.jpg" alt="Brawl Stars">
+        <p>Brawl Stars</p>
+      </div>
+
+      <div class="game-item" data-key="stumble" onclick="openPrices('stumble')">
+        <img src="https://wallpapers.com/images/hd/stumble-guys-gameplay-action-68j4bixik1ns6nuj.jpg" alt="Stumble Guys">
+        <p>Stumble Guys</p>
+      </div>
+
+      <div class="game-item" data-key="fifa" onclick="openPrices('fifa')">
+        <img src="https://wallpapers.com/images/hd/fifa-mobile-logo-f8ylxcxsmr3y6ovl.jpg" alt="FIFA Mobile">
+        <p>FIFA Mobile</p>
+      </div>
+    </div>
+
+    <!-- Price section (se muestra al seleccionar juego) -->
+    <div id="priceSection" class="price-panel" aria-hidden="true" style="display:none;margin-top:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div>
+          <button class="btn-ghost btn" onclick="closePrices()" title="Volver">← Volver</button>
+        </div>
+        <div style="text-align:right">
+          <div id="selectedGameTitle" style="font-weight:900;font-size:1.05rem"></div>
+          <div class="small">Selecciona la moneda y agrega</div>
+        </div>
+      </div>
+
+      <div id="priceList" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <!-- Carrito (toggle) -->
+  <button id="cartToggle" onclick="toggleCart()">🛒 Carrito (<span id="cartCount">0</span>)</button>
+  <div id="cart" role="dialog" aria-label="Carrito de compras" style="display:none">
+    <h3>Tu Carrito</h3>
+    <div id="cartItems"></div>
+    <div class="cart-total">Total: Q<span id="cartTotal">0.00</span></div>
+    <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn-ghost btn" onclick="clearCart()">Vaciar</button>
+      <button class="btn" onclick="checkout()">Pagar (simulado)</button>
+    </div>
+  </div>
+
+<script>
+/* Datos de precios (todos en QUETZALES - números) */
+const prices = {
+  fortnite: {
+    title: "Fortnite — V-Bucks",
+    items: [
+      { name: "1,000 V-Bucks", price: 70.20 },
+      { name: "2,800 V-Bucks", price: 179.00 },
+      { name: "5,000 V-Bucks", price: 288.00 },
+      { name: "13,500 V-Bucks", price: 702.00 }
+    ]
+  },
+  freefire: {
+    title: "Free Fire — Diamantes",
+    items: [
+      { name: "100 Diamantes", price: 11.70 },
+      { name: "210 Diamantes", price: 15.60 },
+      { name: "530 Diamantes", price: 39.00 },
+      { name: "1,060 Diamantes", price: 78.00 },
+      { name: "2,180 Diamantes", price: 156.00 },
+      { name: "5,600 Diamantes", price: 390.00 }
+    ]
+  },
+  codm: {
+    title: "Call of Duty Mobile — CP",
+    items: [
+      { name: "80 CP", price: 7.80 },
+      { name: "420 CP", price: 39.00 },
+      { name: "880 CP", price: 78.00 },
+      { name: "2,400 CP", price: 195.00 },
+      { name: "5,000 CP", price: 390.00 },
+      { name: "10,000 CP", price: 780.00 }
+    ]
+  },
+  pubg: {
+    title: "PUBG Mobile — UC",
+    items: [
+      { name: "60 UC", price: 7.80 },
+      { name: "300 UC", price: 39.00 },
+      { name: "600 UC", price: 78.00 },
+      { name: "1,500 UC", price: 195.00 },
+      { name: "3,100 UC", price: 390.00 },
+      { name: "6,000 UC", price: 780.00 }
+    ]
+  },
+  roblox: {
+    title: "Roblox — Robux",
+    items: [
+      { name: "80 Robux", price: 7.80 },
+      { name: "400 Robux", price: 39.00 },
+      { name: "800 Robux", price: 78.00 },
+      { name: "1,700 Robux", price: 156.00 },
+      { name: "4,500 Robux", price: 390.00 }
+    ]
+  },
+  mobilelegends: {
+    title: "Mobile Legends — Diamantes",
+    items: [
+      { name: "86 Diamantes", price: 15.60 },
+      { name: "172 Diamantes", price: 31.20 },
+      { name: "257 Diamantes", price: 46.80 },
+      { name: "1,076 Diamantes", price: 187.20 }
+    ]
+  },
+  genshin: {
+    title: "Genshin Impact — Cristales",
+    items: [
+      { name: "60 Cristales", price: 7.80 },
+      { name: "300 Cristales", price: 39.00 },
+      { name: "980 Cristales", price: 117.00 },
+      { name: "1,980 Cristales", price: 234.00 },
+      { name: "6,480 Cristales", price: 780.00 }
+    ]
+  },
+  brawl: {
+    title: "Brawl Stars — Gemas",
+    items: [
+      { name: "30 Gemas", price: 15.60 },
+      { name: "80 Gemas", price: 39.00 },
+      { name: "170 Gemas", price: 78.00 },
+      { name: "360 Gemas", price: 156.00 },
+      { name: "950 Gemas", price: 390.00 }
+    ]
+  },
+  stumble: {
+    title: "Stumble Guys — Gemas/Tokens",
+    items: [
+      { name: "200 Tokens", price: 15.60 },
+      { name: "1,600 Tokens", price: 78.00 },
+      { name: "5,000 Tokens", price: 195.00 },
+      { name: "Combo 4.99-49.99", price: 39.00 }
+    ]
+  },
+  fifa: {
+    title: "FIFA Mobile — Points",
+    items: [
+      { name: "40 Points", price: 7.80 },
+      { name: "300 Points", price: 39.00 },
+      { name: "1,000 Points", price: 78.00 },
+      { name: "2,200 Points", price: 156.00 }
+    ]
+  }
+};
+
+/* Carrito (en memoria) */
+let cart = [];
+
+function openPrices(key){
+  const data = prices[key];
+  if(!data) return;
+  // set title
+  document.getElementById('selectedGameTitle').textContent = data.title;
+  // build list
+  const list = document.getElementById('priceList');
+  list.innerHTML = '';
+  data.items.forEach((it, idx) => {
+    const row = document.createElement('div');
+    row.className = 'price-row';
+    row.innerHTML = `
+      <div class="label">${it.name}</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="price">Q${it.price.toFixed(2)}</div>
+        <button class="btn" onclick="addToCart(${escapeJSString(it.price)}, ${escapeJSString(it.name)})">Agregar</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+
+  // show price panel, hide grid
+  document.getElementById('gameGrid').style.display = 'none';
+  document.getElementById('priceSection').style.display = 'block';
+  document.getElementById('priceSection').setAttribute('aria-hidden','false');
+}
+
+/* helper to escape strings/numbers in onclick - we will use alternative approach below */
+function escapeJSString(v){
+  return typeof v === 'number' ? v : `'${String(v).replace(/'/g,"\\'")}'`;
+}
+
+/* Better addToCart wrapper used by events below (we'll attach via event delegation instead of inline onclick to avoid quoting issues) */
+function addToCart(price, name){
+  // if name is not provided, attempt to get from second param
+  if(typeof name === 'undefined' && typeof price === 'string'){
+    // called with (name) accidentally
+    name = price;
+    price = 0;
+  }
+  // ensure numeric
+  price = Number(price) || 0;
+  cart.push({name: String(name || 'Item'), price: price});
+  updateCartUI();
+  // show a small confirmation (flash)
+  flashAdded();
+}
+
+function flashAdded(){
+  const btn = document.getElementById('cartToggle');
+  btn.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:220});
+}
+
+/* Update cart UI */
+function updateCartUI(){
+  const itemsDiv = document.getElementById('cartItems');
+  itemsDiv.innerHTML = '';
+  let total = 0;
+  cart.forEach((it, i) => {
+    total += Number(it.price || 0);
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.innerHTML = `<div>${escapeHtml(it.name)}</div><div>Q${Number(it.price).toFixed(2)}</div>`;
+    itemsDiv.appendChild(div);
+  });
+  document.getElementById('cartTotal').textContent = total.toFixed(2);
+  document.getElementById('cartCount').textContent = cart.length;
+}
+
+/* Toggle cart visibility */
+function toggleCart(){
+  const c = document.getElementById('cart');
+  c.style.display = (c.style.display === 'block') ? 'none' : 'block';
+}
+
+/* Close price panel — back to grid */
+function closePrices(){
+  document.getElementById('priceSection').style.display = 'none';
+  document.getElementById('gameGrid').style.display = 'grid';
+}
+
+/* Empty cart */
+function clearCart(){
+  cart = [];
+  updateCartUI();
+}
+
+/* Simulated checkout */
+function checkout(){
+  if(cart.length === 0){
+    alert('Carrito vacío.');
+    return;
+  }
+  // simulated
+  alert('Pago simulado — Total: Q' + document.getElementById('cartTotal').textContent);
+  // clear after
+  clearCart();
+  toggleCart();
+}
+
+/* small helpers */
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* Attach delegated click handlers for "Agregar" buttons inside priceList (safer than inline onclick in strings) */
+document.addEventListener('click', function(e){
+  if(e.target && e.target.matches && e.target.matches('#priceList .btn')){
+    // find the price text nearby
+    const row = e.target.closest('.price-row');
+    if(!row) return;
+    const priceText = row.querySelector('.price').textContent || '';
+    const label = row.querySelector('.label').textContent || '';
+    // parse Q number
+    const num = Number(priceText.replace(/[^0-9.,]/g,'').replace(',', '.')) || 0;
+    addToCart(num, label);
+  }
+});
+
+/* initial cart UI update */
+updateCartUI();
+
+</script>
+</body>
+</html>
